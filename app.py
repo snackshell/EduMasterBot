@@ -35,19 +35,22 @@ if not TOKEN:
 # Fix the API key loading
 OPENROUTER_KEY = os.getenv("OPENROUTER_KEY")
 if not OPENROUTER_KEY:
-    # Fallback to hardcoded key for testing
-    OPENROUTER_KEY = "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"
-    logger.warning("OPENROUTER_KEY not found in environment, using fallback key")
+    raise ValueError("OPENROUTER_KEY not found in environment variables. Please set it in your .env file.")
 
 MODEL = "google/gemini-2.5-pro-exp-03-25:free"
 MAX_RETRIES = 3
 RETRY_DELAY = 2  # seconds
 
-# Initialize OpenAI client with explicit API key
+# Initialize OpenAI client with explicit API key and proper headers
 client = OpenAI(
     base_url="https://openrouter.ai/api/v1",
     api_key=OPENROUTER_KEY,
-    timeout=30.0
+    timeout=30.0,
+    default_headers={
+        "HTTP-Referer": "https://t.me/EduMasterBot",  # Optional but recommended
+        "X-Title": "EduMasterBot",  # Optional but recommended
+        "Authorization": f"Bearer {OPENROUTER_KEY}"  # Add explicit Authorization header
+    }
 )
 
 # User context storage
